@@ -1,4 +1,4 @@
-package com.example.network.data.repositorty
+package com.example.network.data.repository
 
 import com.example.network.data.model.CatImageModel
 import com.example.network.data.network.CatApiService

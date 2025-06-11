@@ -6,8 +6,12 @@ import retrofit2.http.Header
 import retrofit2.http.Query
 
 // NEVER DO IT IN PROD
-private const val API_KEY = "your_api_key_here"
+private const val API_KEY = "live_YdQaHsreqr4whhZGKKOCe27CqYnmZL42zyPH96bUl3ujq8lkGHb2O5FRzVJFYTbS"
 
 interface CatApiService {
-    suspend fun getRandomCats(): List<CatImageModel>
+    @GET("v1/images/search")
+    suspend fun getRandomCats(
+        @Query("limit") limit: Int = 10,
+        @Header("x-api-key") apiKey: String = "API_KEY"
+    ): List<CatImageModel>
 }

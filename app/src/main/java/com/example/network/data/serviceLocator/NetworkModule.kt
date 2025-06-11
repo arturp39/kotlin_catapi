@@ -12,9 +12,23 @@ import java.util.concurrent.TimeUnit
 object NetworkModule {
     private const val BASE_URL = "https://api.thecatapi.com/"
 
-    private val okHttpClient = null
+    private val json = Json {
+        ignoreUnknownKeys = true
+    }
 
-    private val retrofit = null
+    private val okHttpClient = OkHttpClient.Builder()
+        .connectTimeout(15, TimeUnit.SECONDS)
+        .readTimeout(15, TimeUnit.SECONDS)
+        .addInterceptor(HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        })
+        .build()
 
-    val catApiService: CatApiService = null
+    private val retrofit = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .client(okHttpClient)
+        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+        .build()
+
+    val catApiService: CatApiService = retrofit.create(CatApiService::class.java)
 }

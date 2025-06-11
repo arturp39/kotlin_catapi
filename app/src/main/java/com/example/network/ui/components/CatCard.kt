@@ -1,16 +1,8 @@
 package com.example.network.ui.components
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,9 +15,9 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.catapi.R
+import com.example.network.data.model.Breed
 import com.example.network.data.model.CatImageModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CatCard(
     cat: CatImageModel,
@@ -36,9 +28,7 @@ fun CatCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(12.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
+        Column(modifier = Modifier.padding(16.dp)) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(cat.url)
@@ -68,25 +58,25 @@ fun CatCard(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            cat.breeds.firstOrNull()?.let { breed ->
+            cat.breeds?.firstOrNull()?.let { breed ->
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = breed.name,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
-                breed.description?.let { description ->
+                breed.description?.let {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = description,
+                        text = it,
                         style = MaterialTheme.typography.bodySmall,
                         maxLines = 3
                     )
                 }
-                breed.temperament?.let { temperament ->
+                breed.temperament?.let {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Temperament: $temperament",
+                        text = "Temperament: $it",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -96,13 +86,21 @@ fun CatCard(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun CatCardPreview() = CatCard(
     cat = CatImageModel(
         id = "123",
-        url = "https://placekitten.com/200/300",
-        width = 200,
-        height = 300
+        url = "https://placekitten.com/400/300",
+        width = 400,
+        height = 300,
+        breeds = listOf(
+            Breed(
+                id = "abys",
+                name = "Abyssinian",
+                description = "Abyssinians are highly active and love to explore.",
+                temperament = "Active, Energetic, Independent"
+            )
+        )
     )
 )

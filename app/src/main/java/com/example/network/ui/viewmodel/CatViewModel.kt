@@ -2,16 +2,18 @@ package com.example.network.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.network.data.repositorty.CatRepository
-import com.example.network.data.serviceLocator.NetworkModule
+import com.example.network.data.repository.CatRepository
 import com.example.network.ui.state.CatUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CatViewModel(
-    private val repository: CatRepository = CatRepository(NetworkModule.catApiService)
+@HiltViewModel
+class CatViewModel @Inject constructor(
+    private val repository: CatRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CatUiState())
