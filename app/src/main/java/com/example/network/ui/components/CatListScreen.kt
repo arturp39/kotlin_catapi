@@ -2,7 +2,6 @@ package com.example.network.ui.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -12,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.network.ui.viewmodel.CatViewModel
 import androidx.compose.runtime.getValue
+import androidx.compose.foundation.lazy.itemsIndexed
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,7 +37,7 @@ fun CatListScreen(viewModel: CatViewModel = hiltViewModel()) {
                 .padding(16.dp)
         ) {
             when {
-                uiState.isLoading -> {
+                uiState.isLoading && uiState.cats.isEmpty() -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -50,7 +50,7 @@ fun CatListScreen(viewModel: CatViewModel = hiltViewModel()) {
                     }
                 }
 
-                uiState.errorMessage != null -> {
+                uiState.errorMessage != null && uiState.cats.isEmpty() -> {
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
@@ -69,22 +69,30 @@ fun CatListScreen(viewModel: CatViewModel = hiltViewModel()) {
                     }
                 }
 
-                uiState.cats.isEmpty() -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "No cats found",
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                }
-
                 else -> {
-                    LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        items(uiState.cats) { cat ->
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        itemsIndexed(uiState.cats) { index, cat ->
                             CatCard(cat = cat)
+
+                            if (index >= uiState.cats.lastIndex - 3 && !uiState.isLoading) {
+                                viewModel.loadMoreCats()
+                            }
+                        }
+
+                        if (uiState.isLoading && uiState.cats.isNotEmpty()) {
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator()
+                                }
+                            }
                         }
                     }
                 }
@@ -92,3 +100,4 @@ fun CatListScreen(viewModel: CatViewModel = hiltViewModel()) {
         }
     }
 }
+

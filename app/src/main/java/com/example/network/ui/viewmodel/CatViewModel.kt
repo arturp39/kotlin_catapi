@@ -19,18 +19,37 @@ class CatViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(CatUiState())
     val uiState: StateFlow<CatUiState> = _uiState.asStateFlow()
 
+    private var currentPage = 0
+    private var isLoadingMore = false
+
     init {
         loadRandomCats()
     }
 
     fun loadRandomCats() {
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+        currentPage = 0
+        fetchCats(reset = true)
+    }
 
-            repository.getRandomCats().fold(
+    fun loadMoreCats() {
+        if (isLoadingMore) return
+        currentPage++
+        fetchCats(reset = false)
+    }
+
+    private fun fetchCats(reset: Boolean) {
+        viewModelScope.launch {
+            if (reset) {
+                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+            } else {
+                isLoadingMore = true
+            }
+
+            repository.getRandomCats(limit = 10, page = currentPage).fold(
                 onSuccess = { cats ->
+                    val updatedList = if (reset) cats else _uiState.value.cats + cats
                     _uiState.value = _uiState.value.copy(
-                        cats = cats,
+                        cats = updatedList,
                         isLoading = false,
                         errorMessage = null
                     )
@@ -42,6 +61,8 @@ class CatViewModel @Inject constructor(
                     )
                 }
             )
+
+            isLoadingMore = false
         }
     }
 }

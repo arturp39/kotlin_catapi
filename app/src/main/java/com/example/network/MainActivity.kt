@@ -12,7 +12,7 @@ import com.example.network.ui.components.CatListScreen
 import com.example.network.ui.theme.CatApiTheme
 import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint // ✅ Add this annotation!
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
